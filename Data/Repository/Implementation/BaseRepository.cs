@@ -19,13 +19,18 @@ namespace Data.Repository.Implementation
         }
 
         public async Task CreateAsync(T entity)
-        {
-            await _collectionName.InsertOneAsync(entity);
-        }
+            => await _collectionName.InsertOneAsync(entity);
+
+        public async Task DeleteAsync(string id)
+            => await _collectionName.DeleteOneAsync(x => x.Id == id);
+
+        public async Task<List<T>> GetAllAsync()
+            => await _collectionName.FindAsync(x => x.Active).Result.ToListAsync();
 
         public async Task<List<T>> GetAsync(string id)
-        {
-            return await _collectionName.FindAsync(x => x.Id == id).Result.ToListAsync();
-        }
+            => await _collectionName.FindAsync(x => x.Id == id).Result.ToListAsync();
+
+        public async Task UpdateAsync(T entity, string id)
+            => await _collectionName.ReplaceOneAsync(x => x.Id == id, entity);
     }
 }

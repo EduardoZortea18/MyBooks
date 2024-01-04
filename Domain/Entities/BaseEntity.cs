@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Entities
 {
@@ -10,5 +9,6 @@ namespace Domain.Entities
         public string? Id { get; set; }
         public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
         public DateTimeOffset UpdatedAt { get; set; }
+        public bool Active { get; set; } = true;
     }
 }

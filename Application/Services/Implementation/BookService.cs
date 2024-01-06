@@ -1,16 +1,18 @@
 ﻿using Application.Dtos;
 using Data.Repository;
 using Domain.Entities;
+using FluentValidation;
 
 namespace Application.Services.Implementation
 {
     public class BookService : IBookService
     {
         private IBookRepository _repository;
-
-        public BookService(IBookRepository repository)
+        private IValidator<Book> _validator;
+        public BookService(IBookRepository repository, IValidator<Book> validator)
         {
             _repository = repository;
+            _validator = validator;
         }
 
         public async Task CreateBookAsync(BookRequestModel book)
@@ -25,7 +27,12 @@ namespace Application.Services.Implementation
                 UpdatedAt = book.UpdatedAt,
             };
 
-            await _repository.CreateAsync(newBook);
+            var validationResult = await _validator.ValidateAsync(newBook);
+
+            if (validationResult.IsValid)
+            {
+                await _repository.CreateAsync(newBook);
+            }
         }
 
         public async Task DeleteBookAsync(string id)
@@ -48,8 +55,13 @@ namespace Application.Services.Implementation
                 Title = book.Title,
                 UpdatedAt = book.UpdatedAt,
             };
-            
-            await _repository.UpdateAsync(newBook, id);
+
+            var validationResult = await _validator.ValidateAsync(newBook);
+
+            if (validationResult.IsValid)
+            {
+                await _repository.UpdateAsync(newBook, id);
+            }
         }
     }
 }
